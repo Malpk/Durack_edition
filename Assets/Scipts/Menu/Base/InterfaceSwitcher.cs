@@ -10,11 +10,8 @@ public class InterfaceSwitcher : MonoBehaviour
     {
         if (_openMenu)
             _openMenu.Hide();
-        if (type != MenuType.None)
-        {
-            _openMenu = GetMenu(type);
+         _openMenu = GetMenu(type);
             _openMenu.Show();
-        }
     }
 
     private UIMenu GetMenu(MenuType type)

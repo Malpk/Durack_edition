@@ -6,13 +6,11 @@ public class RegistrationMenu : MonoBehaviour
 {
     [SerializeField] private string _requestKey;
     [Header("Reference")]
-    [SerializeField] private UIMenu _menu;
     [SerializeField] private Button _registrationButton;
     [SerializeField] private TMP_InputField _eMail;
     [SerializeField] private TMP_InputField _login;
     [SerializeField] private TMP_InputField _password;
-
-    public UIMenu Menu => _menu;
+    [SerializeField] private InterfaceSwitcher _switcher;
 
     public event System.Action<string, string> OnRegistration;
 
@@ -28,7 +26,6 @@ public class RegistrationMenu : MonoBehaviour
         _login.onValueChanged.AddListener(UpdateAutoButton);
         _eMail.onValueChanged.AddListener(UpdateAutoButton);
         _password.onValueChanged.AddListener(UpdateAutoButton);
-
     }
 
     private void OnDestroy()
@@ -39,6 +36,10 @@ public class RegistrationMenu : MonoBehaviour
     private void Registration()
     {
         var data = new ClientSignIN(_login.text, _eMail.text, _password.text);
+        _eMail.text = "";
+        _login.text = "";
+        _password.text = "";
+        _switcher.SwitchMenu(MenuType.None);
         OnRegistration.Invoke(_requestKey, JsonUtility.ToJson(data));
     }
 

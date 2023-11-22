@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 public class DataFillter : MonoBehaviour
 {
@@ -13,5 +14,11 @@ public class DataFillter : MonoBehaviour
     public static bool CheakPassword(string password)
     {
         return password.Length >= MINPASSWORDSIZE;
+    }
+
+    public static bool CheakEmail(string email)
+    {
+        var regex = new Regex(@"(\w*)\@(\w*)\.(\w*)");
+        return regex.IsMatch(email);
     }
 }
