@@ -5,6 +5,7 @@ using TMPro;
 public class RegistrationMenu : MonoBehaviour
 {
     [SerializeField] private string _requestKey;
+    [SerializeField] private string _answerKey;
     [Header("Reference")]
     [SerializeField] private Button _registrationButton;
     [SerializeField] private TMP_InputField _eMail;
@@ -17,6 +18,7 @@ public class RegistrationMenu : MonoBehaviour
     private void Reset()
     {
         _requestKey = "Emit_signIn";
+        _answerKey = "sucsessedSignIn";
     }
 
     private void Awake()
@@ -35,12 +37,13 @@ public class RegistrationMenu : MonoBehaviour
 
     private void Registration()
     {
-        var data = new ClientSignIN(_login.text, _eMail.text, _password.text);
+        var json = JsonUtility.ToJson(new ClientSignIN(
+            _login.text, _eMail.text, _password.text));
         _eMail.text = "";
         _login.text = "";
         _password.text = "";
         _switcher.SwitchMenu(MenuType.None);
-        OnRegistration.Invoke(_requestKey, JsonUtility.ToJson(data));
+        OnRegistration.Invoke(_answerKey, MessageData.JsonMessange(_requestKey, json));
     }
 
     private void UpdateAutoButton(string text)

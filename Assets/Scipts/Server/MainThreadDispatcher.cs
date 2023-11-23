@@ -8,9 +8,18 @@ public class MainThreadDispatcher : MonoBehaviour
     private static MainThreadDispatcher instance;
     private Queue<Action> actions = new Queue<Action>(); //Очередь задач
 
+    public static bool IsRun => instance;
+
     private void Awake()
     {
-        instance = this;
+        if (instance)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
     }
 
     //Выполняет конкретное действие в своём потоке. Поток один, остальные ждут (см. оператор lock)

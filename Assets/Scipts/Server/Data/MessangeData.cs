@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 [System.Serializable]
 public class MessageData
 {
@@ -8,5 +10,10 @@ public class MessageData
     {
         this.data = data;
         this.eventType = eventType;
+    }
+
+    public static string JsonMessange(string key, string data)
+    {
+        return JsonConvert.SerializeObject(new MessageData(key, data));
     }
 }

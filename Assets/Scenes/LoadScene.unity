@@ -149,6 +149,7 @@ GameObject:
   m_Component:
   - component: {fileID: 525045121}
   - component: {fileID: 525045120}
+  - component: {fileID: 525045122}
   - component: {fileID: 525045119}
   m_Layer: 0
   m_Name: AutoSocket
@@ -181,9 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73a4fc17a7ec24047b36e0cdd2a05855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ip: 166.88.134.211
-  _port: 9954
   _auto: {fileID: 1408649664}
+  _scoket: {fileID: 525045122}
   _registration: {fileID: 1962332685}
   _onGetMessange:
     m_PersistentCalls:
@@ -215,6 +215,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &525045122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525045118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e256ab6c86cbb5c4ab834aafd6c54bf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ip: 166.88.134.211
+  _port: 9954
 --- !u!1 &562931296
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,6 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lobbyId: 0
+  _key: 
 --- !u!1 &1383347721
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,6 +811,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1854078272}
     m_Modifications:
+    - target: {fileID: 1409645915568301972, guid: bf45b9f143f29ef4fb08f0e6d3ef7b7d, type: 3}
+      propertyPath: _answerKey
+      value: sucsessedLogin
+      objectReference: {fileID: 0}
     - target: {fileID: 1409645915568302057, guid: bf45b9f143f29ef4fb08f0e6d3ef7b7d, type: 3}
       propertyPath: m_Camera
       value: 
@@ -993,6 +1012,10 @@ PrefabInstance:
       propertyPath: _switcher
       value: 
       objectReference: {fileID: 1854078273}
+    - target: {fileID: 3041362513324156461, guid: 05af0ede1e11a8a45996971fcc8c4609, type: 3}
+      propertyPath: _answerKey
+      value: sucsessedSignIn
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05af0ede1e11a8a45996971fcc8c4609, type: 3}
 --- !u!1001 &5984806033696304373

@@ -1,12 +1,15 @@
-[System.Serializable]
-public class ClientLogin
+namespace Server
 {
-    public string name;
-    public string password;
-
-    public ClientLogin(string login, string password)
+    [System.Serializable]
+    public class ClientLogin
     {
-        this.name = login;
-        this.password = password;
+        public string name;
+        public string password;
+
+        public ClientLogin(string login, string password)
+        {
+            this.name = login;
+            this.password = password;
+        }
     }
 }

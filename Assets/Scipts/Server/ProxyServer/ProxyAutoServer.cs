@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine;
+using Server;
 
 public class ProxyAutoServer : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class ProxyAutoServer : MonoBehaviour
     [SerializeField] private AutoMenu _autoMenu;
     [SerializeField] private RegistrationMenu _regisration;
     [Header("Events")]
-    [SerializeField] private UnityEvent<MessageData> _onAcess;
-    [SerializeField] private UnityEvent<MessageData> _onFail;
+    [SerializeField] private UnityEvent<string> _onAcess;
+    [SerializeField] private UnityEvent<string> _onFail;
 
     private void Awake()
     {
@@ -26,32 +27,31 @@ public class ProxyAutoServer : MonoBehaviour
 
     private void OnRegistration(string key, string json)
     {
-        if (json != "" && json != null)
-        {
-            var data = JsonUtility.FromJson<ClientSignIN>(json);
-            _users.Add(data);
-            _onAcess?.Invoke(new MessageData(key,
-                JsonUtility.ToJson(data)));
-        }
-        else
-        {
-            _onFail?.Invoke(new MessageData(key, null));
-        }
+        //if (json != "" && json != null)
+        //{
+        //    var data = JsonUtility.FromJson<ClientSignIN>(json);
+        //    _users.Add(data);
+        //    _onAcess?.Invoke(new MessageData(key,
+        //        JsonUtility.ToJson(data)));
+        //}
+        //else
+        //{
+        //    _onFail?.Invoke(new MessageData(key, null));
+        //}
     }
 
     private void OnAuto(string key, string json)
     {
-        if (json != "" && json != null)
-        {
-            var data = JsonUtility.FromJson<ClientLogin>(json);
-            if (GetPlayer(data))
-            {
-                _onAcess?.Invoke(new MessageData(key,
-                    JsonUtility.ToJson(data)));
-                return;
-            }
-        }
-        _onFail?.Invoke(new MessageData(key, null));
+        //if (json != "" && json != null)
+        //{
+        //    var data = JsonUtility.FromJson<ClientLogin>(json);
+        //    if (GetPlayer(data))
+        //    {
+        //        _onAcess?.Invoke(data);
+        //        return;
+        //    }
+        //}
+        //_onFail?.Invoke(null);
     }
 
     private bool GetPlayer(ClientLogin data)
