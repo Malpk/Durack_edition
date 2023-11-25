@@ -26,14 +26,17 @@ public class SocketServer : MonoBehaviour
         _socket.Connect();
     }
 
-    public void SendRequest(string answerKey, string messange, System.Action<string> answerAction)
+    public void SendRequest(string answerKey, string messange, System.Action<string> answerAction = null)
     {
-        _requests.Add(answerAction, answerKey);
+        if(answerAction != null)
+            _requests.Add(answerAction, answerKey);
         _socket.Send(messange);
+        Debug.Log(messange);
     }
 
     protected void GetAnswer(string json)
     {
+        Debug.Log(json);
         if (!MainThreadDispatcher.IsRun)
             Debug.LogError("is't run MainThreadDispatcher");
         MainThreadDispatcher.RunOnMainThread(() =>
