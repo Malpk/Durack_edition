@@ -5,9 +5,10 @@ public class Lobby : MonoBehaviour
 {
     [SerializeField] private Player _player;
     [SerializeField] private LobbyUI _menu;
-
+    [SerializeField] private RoomList _rooms;
     public string Token { get; private set; }
     public Player Player => _player;
+    public RoomList Rooms => _rooms;
 
     private void Awake()
     {

@@ -9,6 +9,17 @@ public class LobbyServerSocket : MonoBehaviour
     [SerializeField] private Lobby _lobby;
     [SerializeField] private SocketServer _socket;
 
+    private void Awake()
+    {
+        _lobby.Rooms.OnEnterRoom += OnEnterRoom;
+    }
+
+    private void OnDestroy()
+    {
+        _lobby.Rooms.OnEnterRoom -= OnEnterRoom;
+    }
+
+
     private void Start()
     {
         if (PlayerPrefs.HasKey(_key))
@@ -27,6 +38,13 @@ public class LobbyServerSocket : MonoBehaviour
             _socket.SendRequest("FreeRooms" , CreateMessange("getFreeRooms", json), UpdateRooms);
         }
     }
+
+
+    private void OnEnterRoom(uint key, System.Action<string> arg2)
+    {
+        Debug.Log("Enter");
+    }
+
 
     public string CreateMessange(string key, string json)
     {
@@ -53,16 +71,17 @@ public class LobbyServerSocket : MonoBehaviour
     private void SetChip(string json)
     {
         var data = JsonConvert.DeserializeObject<ClientData>(json);
-        if (!_lobby.Player.SetChip(data))
-            Debug.LogError("is worng player token");
+        _lobby.Player.SetChip(data);
     }
 
     private void UpdateRooms(string json)
     {
         var freeRoomsID = JsonConvert.DeserializeObject<FreeRooms>(json);
         if (freeRoomsID.FreeRoomsID != null)
-            _lobby.UpdateRooms(freeRoomsID.FreeRoomsID);
+            _lobby.Rooms.UpdateRoom(freeRoomsID.FreeRoomsID);
         else
             Debug.LogError("is not freeRooms");
     }
+
+
 }

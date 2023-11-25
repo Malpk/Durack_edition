@@ -27,13 +27,8 @@ public class Player : MonoBehaviour
         _data = data;
     }
 
-    public bool SetChip(ClientData data)
+    public void SetChip(ClientData data)
     {
-        if (_data.Token == data.Token)
-        {
-            Chips = data.Chips;
-            return true;
-        }
-        return false;
+        Chips = data.Chips;
     }
 }
