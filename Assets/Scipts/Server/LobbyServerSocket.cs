@@ -1,87 +1,92 @@
 using Client;
 using UnityEngine;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public class LobbyServerSocket : MonoBehaviour
 {
     [SerializeField] private string _key;
     [Header("Reference")]
-    [SerializeField] private Lobby _lobby;
     [SerializeField] private SocketServer _socket;
 
-    private void Awake()
+    private Dictionary<string, System.Action<string>> _list = new Dictionary<string, System.Action<string>>();
+
+    public event System.Action<uint[]> OnFreeRooms;
+
+    private void OnEnable()
     {
-        _lobby.Rooms.OnEnterRoom += OnEnterRoom;
+        _socket.OnGetMessange += OnGetMessange;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        _lobby.Rooms.OnEnterRoom -= OnEnterRoom;
+        _socket.OnGetMessange -= OnGetMessange;
     }
 
-
-    private void Start()
+    public UserData Load()
     {
         if (PlayerPrefs.HasKey(_key))
         {
             var userJson = PlayerPrefs.GetString(_key);
             var data = JsonConvert.DeserializeObject<UserData>(userJson);
-            _lobby.Initializate(data);
             PlayerPrefs.DeleteKey(_key);
-            var json = JsonConvert.SerializeObject(new Server.UserData()
-            {
-                token = data.Token,
-                UserID = data.ID
-            });
-            _socket.SendRequest("Chips", CreateMessange("getChips", json), SetChip);
-            _socket.SendRequest("cl_getImage", CreateMessange("getAvatar", json), SetAvatar);
-            _socket.SendRequest("FreeRooms" , CreateMessange("getFreeRooms", json), UpdateRooms);
+            return data;
         }
+        return default;
     }
 
-
-    private void OnEnterRoom(uint key, System.Action<string> arg2)
+    public void AddAction(string key, System.Action<string> action)
     {
-        Debug.Log("Enter");
+        _list.Add(key, action);
     }
 
+    public void RequestChips(UserData data, System.Action<string> action)
+    {
+        var json = JsonConvert.SerializeObject(new Server.UserData(data));
+        _socket.SendRequest("Chips", CreateMessange("getChips", json), action);
+    }
 
-    public string CreateMessange(string key, string json)
+    public void RequestAvatar(UserData data, System.Action<string> action)
+    {
+        var json = JsonConvert.SerializeObject(new Server.UserData(data));
+        _socket.SendRequest("cl_getImage", CreateMessange("getAvatar", json), action);
+    }
+    public void RequestFreeRoom(UserData data, System.Action<string> action)
+    {
+        var json = JsonConvert.SerializeObject(new Server.UserData(data));
+        _socket.SendRequest("FreeRooms", CreateMessange("getFreeRooms", json), action);
+    }
+
+    public void EnterRoom(uint roomId, UserData data, System.Action<string> action)
+    {
+        var joinRoomData = new ServerJoinRoom()
+        {
+            Token = data.Token,
+            key = "",
+            RoomID = roomId
+        };
+        var messange = CreateMessange("srv_joinRoom", JsonConvert.SerializeObject(joinRoomData));
+        _socket.SendRequest("cl_enterInTheRoom", messange, action);
+    }
+
+    public void CreateRoom(ServerCreateRoom roomData, System.Action<string> action)
+    {
+        var messange = CreateMessange("srv_createRoom", JsonConvert.SerializeObject(roomData));
+        _socket.SendRequest("cl_enterInTheRoomAsOwner", messange, action);
+    }
+
+    private string CreateMessange(string key, string json)
     {
         var messange = new MessageData(key, json);
         return JsonConvert.SerializeObject(messange);
     }
 
-    #region avatar
-    private void SetAvatar(string json)
+    private void OnGetMessange(MessageData messange)
     {
-        var data = JsonConvert.DeserializeObject<AvatarData>(json);
-        _lobby.SetAvatar(data.UserID, GetImage(data.AvatarImage));
+        foreach (var item in _list)
+        {
+            if (item.Key == messange.eventType)
+                item.Value.Invoke(messange.data);
+        }
     }
-
-    private Sprite GetImage(string json)
-    {
-        Texture2D texture = new Texture2D(1, 1);
-        texture.LoadImage(System.Convert.FromBase64String(json));
-        return Sprite.Create(texture,  new Rect(0, 0, texture.width,
-            texture.height), Vector2.one * 0.5f);
-    }
-    #endregion
-
-    private void SetChip(string json)
-    {
-        var data = JsonConvert.DeserializeObject<ClientData>(json);
-        _lobby.Player.SetChip(data);
-    }
-
-    private void UpdateRooms(string json)
-    {
-        var freeRoomsID = JsonConvert.DeserializeObject<FreeRooms>(json);
-        if (freeRoomsID.FreeRoomsID != null)
-            _lobby.Rooms.UpdateRoom(freeRoomsID.FreeRoomsID);
-        else
-            Debug.LogError("is not freeRooms");
-    }
-
-
 }

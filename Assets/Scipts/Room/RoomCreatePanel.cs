@@ -8,9 +8,6 @@ public class RoomCreatePanel : MonoBehaviour
     [SerializeField] private ServerCreateRoom _roomSetting;
     [SerializeField] private string _key = "roomSetting";
     [SerializeField] private uint[] _bets;
-    [Header("Reference")]
-    [SerializeField] private Player _player;
-    [SerializeField] private SocketServer _socket;
     [Header("UIReference")]
     [SerializeField] private Slider _betSlider;
     [SerializeField] private Button _createRoom;
@@ -20,6 +17,8 @@ public class RoomCreatePanel : MonoBehaviour
 
     private int[] _maxCountsPlayers = new int[] { 2, 3, 4, 5, 6 };
     private uint[] _countCards = new uint[] { 24, 36, 52 };
+
+    public event System.Action<ServerCreateRoom> OnCreateRoom;
 
     private void Awake()
     {
@@ -58,12 +57,8 @@ public class RoomCreatePanel : MonoBehaviour
     public void CreateRoom()
     {
         var setting = _roomSetting;
-        setting.roomOwner = _player.Data.ID;
         setting.key = "";
-        setting.token = _player.Data.Token;
-        var messange = new MessageData("srv_createRoom",
-            JsonConvert.SerializeObject(setting));
-        _socket.SendRequest("", JsonConvert.SerializeObject(messange), null) ;
+        OnCreateRoom?.Invoke(setting);
     }
 
     private void SetBet(float value)

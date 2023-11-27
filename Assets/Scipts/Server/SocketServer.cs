@@ -7,8 +7,11 @@ public class SocketServer : MonoBehaviour
     [SerializeField] private string _ip = "166.88.134.211"; //Айпи адрес сервера с бекендом
     [SerializeField] private string _port = "9954"; //Порт подключения
 
+
     private WebSocket _socket;
     private Dictionary<System.Action<string>, string> _requests = new Dictionary<System.Action<string>, string>();
+
+    public event System.Action<MessageData> OnGetMessange;
 
     private void Awake()
     {
@@ -26,17 +29,19 @@ public class SocketServer : MonoBehaviour
         _socket.Connect();
     }
 
-    public void SendRequest(string answerKey, string messange, System.Action<string> answerAction = null)
+    public void SendRequest(string answerKey, string messange, System.Action<string> action = null)
     {
-        if(answerAction != null)
-            _requests.Add(answerAction, answerKey);
+        if (action != null)
+        {
+            if (!_requests.ContainsKey(action))
+                _requests.Add(action, answerKey);
+        }
         _socket.Send(messange);
         Debug.Log(messange);
     }
 
     protected void GetAnswer(string json)
     {
-        Debug.Log(json);
         if (!MainThreadDispatcher.IsRun)
             Debug.LogError("is't run MainThreadDispatcher");
         MainThreadDispatcher.RunOnMainThread(() =>
@@ -47,6 +52,8 @@ public class SocketServer : MonoBehaviour
                 reciver.Invoke(messange.data);
                 _requests.Remove(reciver);
             }
+            Debug.Log(json);
+            OnGetMessange?.Invoke(messange);
         });
     }
 

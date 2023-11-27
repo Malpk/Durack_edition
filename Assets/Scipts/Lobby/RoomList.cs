@@ -14,7 +14,7 @@ public class RoomList : MonoBehaviour
     private List<RoomPanel> _pool = new List<RoomPanel>();
     private List<RoomPanel> _activeRooms = new List<RoomPanel>();
 
-    public event System.Action<uint, System.Action<string>> OnEnterRoom;
+    public event System.Action<uint> OnEnterRoom;
 
     public void UpdateRoom(uint [] ids)
     {
@@ -50,12 +50,7 @@ public class RoomList : MonoBehaviour
 
     private void Enter(uint id)
     {
-        OnEnterRoom?.Invoke(id, GetAnswer);
-    }
-
-    private void GetAnswer(string answer)
-    {
-        Debug.Log(answer);
+        OnEnterRoom?.Invoke(id);
     }
 
     private void AddRoom(uint id)
