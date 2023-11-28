@@ -27,7 +27,7 @@ public class Room : MonoBehaviour
     {
         _soket.AddAction("cl_joinRoom", AddEnemy);
         _soket.AddAction("cl_leaveRoom", RemoveEnemy);
-        _exitButton.onClick.AddListener(() => Exit(_player));
+        _exitButton.onClick.AddListener(Exit);
     }
 
     private void OnDestroy()
@@ -58,7 +58,7 @@ public class Room : MonoBehaviour
     public void Enter(Player player)
     {
         _player = player;
-        _hud.SetPlayer(player);
+        _hud.Initilizate(player, _roomData);
         _hud.SetStartMode(false);
         gameObject.SetActive(true);
         _soket.GetRoomPlayer(new Server.UserData()
@@ -68,16 +68,16 @@ public class Room : MonoBehaviour
         }, SetStartMode);
     }
 
-    public void Exit(Player player)
+    public void Exit()
     {
-        _player = null;
         gameObject.SetActive(false);
         _lobby.gameObject.SetActive(true);
         _soket.ExitRoom(new ServerExitRoom()
         {
             rid = _roomData.RoomID,
-            token = player.Data.Token
+            token = _player.Data.Token
         });
+        _player = null;
     }
     #endregion
     #region Enemys

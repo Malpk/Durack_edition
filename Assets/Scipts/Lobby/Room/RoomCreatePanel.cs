@@ -7,9 +7,9 @@ public class RoomCreatePanel : MonoBehaviour
 {
     [SerializeField] private ServerCreateRoom _roomSetting;
     [SerializeField] private string _key = "roomSetting";
-    [SerializeField] private uint[] _bets;
+
     [Header("UIReference")]
-    [SerializeField] private Slider _betSlider;
+    [SerializeField] private BetSlader _betSlider;
     [SerializeField] private Button _createRoom;
     [SerializeField] private TMP_Dropdown _mode;
     [SerializeField] private TMP_Dropdown _typeRoom;
@@ -22,22 +22,19 @@ public class RoomCreatePanel : MonoBehaviour
 
     private void Awake()
     {
-        SubcriteEvent();
         if (PlayerPrefs.HasKey(_key))
         {
             var setting = JsonConvert.DeserializeObject<RoomCreateSetting>(PlayerPrefs.GetString(_key));
-            _betSlider.value = setting.Bet;
+            _betSlider.Load(setting.Bet);
             _mode.value = setting.Type;
             _typeRoom.value = setting.IsPrivate;
             _maxPlayer.value = setting.MaxPlayers;
         }
-        else
-        {
-            SetBet(_betSlider.value);
-            SetMode(_mode.value);
-            SetTypeRoom(_typeRoom.value);
-            SetCountPlayers(_maxPlayer.value);
-        }
+        SetBet(_betSlider.Bet);
+        SetMode(_mode.value);
+        SetTypeRoom(_typeRoom.value);
+        SetCountPlayers(_maxPlayer.value);
+        SubcriteEvent();
     }
 
     private void OnDestroy()
@@ -45,7 +42,7 @@ public class RoomCreatePanel : MonoBehaviour
         var setting = new RoomCreateSetting()
         {
             IsPrivate = _typeRoom.value,
-            Bet = _betSlider.value,
+            Bet = _betSlider.Save(),
             Type = _mode.value,
             MaxPlayers = _maxPlayer.value
         };
@@ -55,7 +52,7 @@ public class RoomCreatePanel : MonoBehaviour
 
     private void SubcriteEvent()
     {
-        _betSlider.onValueChanged.AddListener(SetBet);
+        _betSlider.OnBet += SetBet;
         _mode.onValueChanged.AddListener(SetMode);
         _typeRoom.onValueChanged.AddListener(SetTypeRoom);
         _maxPlayer.onValueChanged.AddListener(SetCountPlayers);
@@ -63,7 +60,7 @@ public class RoomCreatePanel : MonoBehaviour
     }
     private void UnsubcreteEvent()
     {
-        _betSlider.onValueChanged.RemoveAllListeners();
+        _betSlider.OnBet -= SetBet;
         _mode.onValueChanged.RemoveAllListeners();
         _typeRoom.onValueChanged.RemoveAllListeners();
         _maxPlayer.onValueChanged.RemoveAllListeners();
@@ -78,10 +75,9 @@ public class RoomCreatePanel : MonoBehaviour
         OnCreateRoom?.Invoke(setting);
     }
 
-    private void SetBet(float value)
+    private void SetBet(uint bet)
     {
-       var index = Mathf.RoundToInt(value * (_bets.Length-1));
-        _roomSetting.bet = _bets[index];
+        _roomSetting.bet = bet;
     }
 
     private void SetMode(int index)
