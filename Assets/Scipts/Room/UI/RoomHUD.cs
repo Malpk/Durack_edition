@@ -1,13 +1,15 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RoomHUD : MonoBehaviour
 {
-    [SerializeField] private PlayerPanel _panel;
+    [SerializeField] private Button _start;
     [SerializeField] private RoomRow _row;
+    [SerializeField] private PlayerPanel _panel;
 
-    public void ShowEnemys(int count)
+    public void SetStartMode(bool mode)
     {
-        _row.Show(count);
+        _start.interactable = mode;
     }
 
     public void SetPlayer(Player player)

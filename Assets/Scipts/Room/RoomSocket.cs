@@ -1,6 +1,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Server;
 
 public class RoomSocket : MonoBehaviour
 {
@@ -25,6 +26,13 @@ public class RoomSocket : MonoBehaviour
     public void AddAction(string key, System.Action<string> action)
     {
         _actions.Add(key, action);
+    }
+
+    public void GetRoomPlayer(UserData data, System.Action<string> action)
+    {
+        var messange = MessageData.JsonMessange("get_RoomPlayers", 
+            JsonConvert.SerializeObject(data));
+        _socket.SendRequest("roomPlayersID", messange, action);
     }
 
     public void ExitRoom(ServerExitRoom data)

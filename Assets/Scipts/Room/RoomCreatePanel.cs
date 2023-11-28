@@ -22,18 +22,14 @@ public class RoomCreatePanel : MonoBehaviour
 
     private void Awake()
     {
-        _betSlider.onValueChanged.AddListener(SetBet);
-        _mode.onValueChanged.AddListener(SetMode);
-        _typeRoom.onValueChanged.AddListener(SetTypeRoom);
-        _maxPlayer.onValueChanged.AddListener(SetCountPlayers);
-        _createRoom.onClick.AddListener(CreateRoom);
+        SubcriteEvent();
         if (PlayerPrefs.HasKey(_key))
         {
-            _roomSetting = JsonConvert.DeserializeObject<ServerCreateRoom>(PlayerPrefs.GetString(_key));
-            _betSlider.value = _roomSetting.bet;
-            _mode.value = _roomSetting.type;
-            _typeRoom.value = _roomSetting.isPrivate;
-            _maxPlayer.value = _roomSetting.maxPlayers;
+            var setting = JsonConvert.DeserializeObject<RoomCreateSetting>(PlayerPrefs.GetString(_key));
+            _betSlider.value = setting.Bet;
+            _mode.value = setting.Type;
+            _typeRoom.value = setting.IsPrivate;
+            _maxPlayer.value = setting.MaxPlayers;
         }
         else
         {
@@ -46,13 +42,34 @@ public class RoomCreatePanel : MonoBehaviour
 
     private void OnDestroy()
     {
-        PlayerPrefs.SetString(_key, JsonConvert.SerializeObject(_roomSetting));
+        var setting = new RoomCreateSetting()
+        {
+            IsPrivate = _typeRoom.value,
+            Bet = _betSlider.value,
+            Type = _mode.value,
+            MaxPlayers = _maxPlayer.value
+        };
+        PlayerPrefs.SetString(_key, JsonConvert.SerializeObject(setting));
+        UnsubcreteEvent();
+    }
+
+    private void SubcriteEvent()
+    {
         _betSlider.onValueChanged.AddListener(SetBet);
+        _mode.onValueChanged.AddListener(SetMode);
+        _typeRoom.onValueChanged.AddListener(SetTypeRoom);
+        _maxPlayer.onValueChanged.AddListener(SetCountPlayers);
+        _createRoom.onClick.AddListener(CreateRoom);
+    }
+    private void UnsubcreteEvent()
+    {
+        _betSlider.onValueChanged.RemoveAllListeners();
         _mode.onValueChanged.RemoveAllListeners();
         _typeRoom.onValueChanged.RemoveAllListeners();
         _maxPlayer.onValueChanged.RemoveAllListeners();
         _createRoom.onClick.RemoveAllListeners();
     }
+
 
     public void CreateRoom()
     {

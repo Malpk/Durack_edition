@@ -37,15 +37,35 @@ public class Room : MonoBehaviour
 
     public void InitializateRoom(JoinRoom room)
     {
-        _hud.ShowEnemys(room.maxPlayers - 1);
+        _roomData = room;
         _roomIdText.SetText("ID:" + room.RoomID.ToString());
     }
+    #region Mode
 
+    private void SetStartMode(string json)
+    {
+        var players = JsonConvert.DeserializeObject<PlayersInRoom>(json).PlayersID;
+        _hud.SetStartMode(players.Length == _roomData.maxPlayers);
+        foreach (var id in players)
+        {
+            if(id != _player.Data.ID)
+                AddEnemy(id);
+        }
+    }
+
+    #endregion
+    #region Player
     public void Enter(Player player)
     {
         _player = player;
         _hud.SetPlayer(player);
+        _hud.SetStartMode(false);
         gameObject.SetActive(true);
+        _soket.GetRoomPlayer(new Server.UserData()
+        {
+            UserID = _player.Data.ID,
+            RoomID = _roomData.RoomID
+        }, SetStartMode);
     }
 
     public void Exit(Player player)
@@ -59,17 +79,28 @@ public class Room : MonoBehaviour
             token = player.Data.Token
         });
     }
+    #endregion
+    #region Enemys
 
     public void AddEnemy(string json)
     {
+        var id = JsonConvert.DeserializeObject<PlayerJoin>(json).playerID;
+        AddEnemy(id);
+    }
+
+    private void AddEnemy(uint id)
+    {
         var player = Instantiate(_prefab.gameObject, transform).
-            GetComponent<Player>();
+             GetComponent<Player>();
         player.BindPlayer(new UserData()
         {
-            ID = JsonConvert.DeserializeObject<PlayerJoin>(json).playerID
+            ID = id
         });
         _hud.AddEnemy(player);
         _enemys.Add(player);
+        _hud.SetStartMode(_enemys.Count + 1 == _roomData.maxPlayers);
+        if (_enemys.Count + 1 > _roomData.maxPlayers)
+            Debug.LogError("player is out range room size");
     }
 
     public void RemoveEnemy(string json)
@@ -79,11 +110,11 @@ public class Room : MonoBehaviour
         _hud.RemoveEnemy(player);
         _enemys.Remove(player);
         Destroy(player);
+        _hud.SetStartMode(false);
     }
 
     private Player GetEnemys(uint id)
     {
-        Debug.LogWarning(id);
         foreach (var enemy in _enemys)
         {
             if (enemy.Data.ID == id)
@@ -91,4 +122,5 @@ public class Room : MonoBehaviour
         }
         return null;
     }
+    #endregion
 }
