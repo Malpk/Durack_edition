@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
             OnUpdateChips?.Invoke(_chips);
         }
     }
+    public Sprite Sprite { get; private set; }
     public UserData Data => _data;
 
     public event System.Action<int> OnUpdateChips;
@@ -25,6 +26,11 @@ public class Player : MonoBehaviour
     public void BindPlayer(UserData data)
     {
         _data = data;
+    }
+
+    public void SetAvatar(Sprite sprite)
+    {
+        Sprite = sprite;   
     }
 
     public void SetChip(ClientData data)

@@ -8,15 +8,24 @@ public class UserPreview : MonoBehaviour
     [SerializeField] private Image _icon;
     [SerializeField] private TextMeshProUGUI _name;
 
-    public void SetAvatar(Sprite avatar)
+    public void SetPlayer(Player avatar)
     {
-        _temp.gameObject.SetActive(!avatar);
-        _icon.gameObject.SetActive(avatar);
-        _icon.sprite = avatar;
+        SetName(avatar);
+        SetAvatar(avatar ? avatar.Sprite : null);
     }
 
-    public void SetName(string name)
+    public void SetAvatar(Sprite sprite)
     {
-        _name.SetText(name);
+        _icon.sprite = sprite;
+        _icon.gameObject.SetActive(sprite);
+        _temp.gameObject.SetActive(!sprite);
+    }
+
+    public void SetName(Player player)
+    {
+        if(player)
+            _name.SetText(player.Data.Login);
+        _name.gameObject.SetActive(player);
     }
 }
+

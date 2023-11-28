@@ -39,6 +39,11 @@ public class SocketServer : MonoBehaviour
         _socket.Send(messange);
         Debug.Log(messange);
     }
+    public void SendRequest(string messange)
+    {
+        _socket.Send(messange);
+        Debug.Log(messange);
+    }
 
     protected void GetAnswer(string json)
     {
@@ -46,13 +51,13 @@ public class SocketServer : MonoBehaviour
             Debug.LogError("is't run MainThreadDispatcher");
         MainThreadDispatcher.RunOnMainThread(() =>
         {
+            Debug.Log("get: " + json);
             var messange = JsonUtility.FromJson<MessageData>(json);
             foreach (var reciver in GetRecivers(messange.eventType))
             {
                 reciver.Invoke(messange.data);
                 _requests.Remove(reciver);
             }
-            Debug.Log(json);
             OnGetMessange?.Invoke(messange);
         });
     }

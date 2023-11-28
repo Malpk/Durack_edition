@@ -71,9 +71,9 @@ public class RoomList : MonoBehaviour
 
     private void UpdateContentCanvas()
     {
-        var rect = _content.rect;
-        rect.height = _holder.cellSize.y * (_activeRooms.Count + 1);
-        _content.rect.Set(rect.x, rect.y, rect.width, rect.height);
+        var rect = _content.sizeDelta;
+        rect.y = _holder.cellSize.y * (_activeRooms.Count + 1);
+        _content.sizeDelta = rect;
     }
 
     private void DeleteRooom(RoomPanel panel)

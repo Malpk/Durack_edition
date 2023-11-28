@@ -7,9 +7,9 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private UserPreview _preview;
     [SerializeField] private TextMeshProUGUI _chips;
 
-    public void SetName(string login)
+    public void SetName(Player player)
     {
-        _preview.SetName(login);
+        _preview.SetName(player);
     }
 
     public void SetAvatar(Sprite avatar)

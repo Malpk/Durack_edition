@@ -22,8 +22,6 @@ public class Lobby : MonoBehaviour
         _createPanel.OnCreateRoom += OnCreateRoom;
     }
 
-
-
     private void OnDisable()
     {
         _player.OnUpdateChips -= _menu.SetChip;
@@ -35,7 +33,7 @@ public class Lobby : MonoBehaviour
         var data = _socket.Load();
         Token = data.Token;
         _player.BindPlayer(data);
-        _menu.SetName(data.Login);
+        _menu.SetName(_player);
         _socket.RequestFreeRoom(data, UpdateRooms);
         _socket.RequestAvatar(data, SetAvatar);
         _socket.RequestChips(data, SetChip);
@@ -83,7 +81,6 @@ public class Lobby : MonoBehaviour
     {
         _socket.EnterRoom(roomId, _player.Data, JoinRoom);
     }
-
 
     private void JoinRoom(string json)
     {
