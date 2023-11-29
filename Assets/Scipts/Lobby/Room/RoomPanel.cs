@@ -4,10 +4,16 @@ using TMPro;
 
 public class RoomPanel : MonoBehaviour
 {
+    [SerializeField] private SpriteItem[] _sprites;
+    [Header("Reference")]
+    [SerializeField] private Image _icon;
     [SerializeField] private Button _joinButton;
     [SerializeField] private TextMeshProUGUI _id;
+    [SerializeField] private TextMeshProUGUI _roomProgress;
 
-    public uint ID { get; private set; }
+    public uint ID => Data.RoomId;
+    public RoomData Data { get; private set; }
+
 
     public event System.Action<uint> OnEnter;
 
@@ -21,14 +27,26 @@ public class RoomPanel : MonoBehaviour
         _joinButton.onClick.RemoveAllListeners();
     }
 
-    public void Bind(uint id)
+    public void Bind(RoomData data)
     {
-        ID = id;
-        _id.SetText(id.ToString());
+        Data = data;
+        _icon.sprite = GetIcon(data.Type);
+        _roomProgress.SetText($"{data.CountPlayer}/{data.RoomSize}");
+        _id.SetText(data.RoomId.ToString());
     }
 
     private void Enter()
     {
         OnEnter?.Invoke(ID);
+    }
+
+    private Sprite GetIcon(int type)
+    {
+        foreach (var item in _sprites)
+        {
+            if (item.Type == type)
+                return item.Icon;
+        }
+        return null;
     }
 }

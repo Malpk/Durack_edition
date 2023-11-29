@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using UnityEngine;
 using Client;
-
+using System.Collections.Generic;
 
 public class Lobby : MonoBehaviour
 {
@@ -13,10 +13,22 @@ public class Lobby : MonoBehaviour
     [Header("Server")]
     [SerializeField] private LobbyServerSocket _socket;
 
+    private bool _isStart;
+
     public string Token { get; private set; }
+
+
+    private void Awake()
+    {
+        var data = _socket.Load();
+        Token = data.Token;
+        _player.BindPlayer(data);
+    }
 
     private void OnEnable()
     {
+        if(_isStart)
+            _socket.RequestFreeRoom(_player.Data, UpdateRooms);
         _player.OnUpdateChips += _menu.SetChip;
         _rooms.OnEnterRoom += OnEnterRoom;
         _createPanel.OnCreateRoom += OnCreateRoom;
@@ -26,17 +38,16 @@ public class Lobby : MonoBehaviour
     {
         _player.OnUpdateChips -= _menu.SetChip;
         _rooms.OnEnterRoom -= OnEnterRoom;
+        _createPanel.OnCreateRoom -= OnCreateRoom;
     }
 
     public void Start()
     {
-        var data = _socket.Load();
-        Token = data.Token;
-        _player.BindPlayer(data);
+        _isStart = true;
         _menu.SetName(_player);
-        _socket.RequestFreeRoom(data, UpdateRooms);
-        _socket.RequestAvatar(data, SetAvatar);
-        _socket.RequestChips(data, SetChip);
+        _socket.RequestAvatar(_player.Data, SetAvatar);
+        _socket.RequestChips(_player.Data, SetChip);
+        _socket.RequestFreeRoom(_player.Data, UpdateRooms);
         _socket.AddAction("FreeRooms", UpdateRooms);
     }
 
@@ -49,8 +60,13 @@ public class Lobby : MonoBehaviour
 
     private void UpdateRooms(string json)
     {
-        var freeRooms = JsonConvert.DeserializeObject<FreeRooms>(json);
-        _rooms.UpdateRoom(freeRooms.FreeRoomsID);
+        var jsons = JsonConvert.DeserializeObject<string[]>(json);
+        var list = new List<RoomData>();
+        foreach (var data in jsons)
+        {
+            list.Add(JsonConvert.DeserializeObject<RoomData>(data));
+        }
+        _rooms.UpdateRoom(list.ToArray());
     }
 
     private void SetAvatar(string json)

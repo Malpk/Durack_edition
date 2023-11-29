@@ -16,25 +16,25 @@ public class RoomList : MonoBehaviour
 
     public event System.Action<uint> OnEnterRoom;
 
-    public void UpdateRoom(uint [] ids)
+    public void UpdateRoom(RoomData [] datas)
     {
-        var list = GetNewRoom(ids);
-        foreach (var id in list)
+        var list = GetNewRoom(datas);
+        foreach (var data in list)
         {
-            AddRoom(id);
+            AddRoom(data);
         }
     }
 
-    private List<uint> GetNewRoom(uint[] ids)
+    private List<RoomData> GetNewRoom(RoomData[] ids)
     {
-        var list = new List<uint>();
+        var list = new List<RoomData>();
         list.AddRange(ids);
         var delete = new List<RoomPanel>();
         foreach (var panel in _activeRooms)
         {
-            if (list.Contains(panel.ID))
+            if (list.Contains(panel.Data))
             {
-                list.Remove(panel.ID);
+                list.Remove(panel.Data);
             }
             else
             {
@@ -53,7 +53,7 @@ public class RoomList : MonoBehaviour
         OnEnterRoom?.Invoke(id);
     }
 
-    private void AddRoom(uint id)
+    private void AddRoom(RoomData id)
     {
         var panel = Create();
         panel.Bind(id);

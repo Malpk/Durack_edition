@@ -9,24 +9,6 @@ public class StartMenu : MonoBehaviour
 
     private void Awake()
     {
-        //var data = new RoomData()
-        //{
-        //    RoomId = 45454,
-        //    RoomSize = 6,
-        //    CountPlayer = 2,
-        //    Bet = 500,
-        //    Type = 0
-        //};
-
-        //var rooms = new string[]
-        //{
-        //    JsonConvert.SerializeObject(data),
-        //    JsonConvert.SerializeObject(data),
-        //    JsonConvert.SerializeObject(data)
-        //};
-
-        //Debug.Log(JsonConvert.SerializeObject(MessageData.
-        //    JsonMessange("FreeRooms", JsonConvert.SerializeObject(rooms))));
         ShowStartMenu();
         _backButton.onClick.AddListener(ShowStartMenu);
     }
