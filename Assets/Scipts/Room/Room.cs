@@ -13,6 +13,7 @@ public class Room : MonoBehaviour
     [SerializeField] private RoomHUD _hud;
     [SerializeField] private RoomSkin _skin;
     [SerializeField] private RoomSocket _soket;
+    [SerializeField] private RoomStartPanel _startPanel;
     [Header("Reference")]
     [SerializeField] private Button _exitButton;
     [SerializeField] private TextMeshProUGUI _roomIdText;
@@ -28,11 +29,13 @@ public class Room : MonoBehaviour
         _soket.AddAction("cl_joinRoom", AddEnemy);
         _soket.AddAction("cl_leaveRoom", RemoveEnemy);
         _exitButton.onClick.AddListener(Exit);
+        _startPanel.OnStart += StartGame;
     }
 
     private void OnDestroy()
     {
         _exitButton.onClick.RemoveAllListeners();
+        _startPanel.OnStart -= StartGame;
     }
 
     public void InitializateRoom(JoinRoom room)
@@ -42,10 +45,25 @@ public class Room : MonoBehaviour
     }
     #region Mode
 
+    public void StartGame()
+    {
+        var readyData = new ServerJoinRoom()
+        {
+            RoomID = _roomData.RoomID
+        };
+        _soket.StartRoom(readyData, OnStartRoom);
+    }
+
+    private void OnStartRoom(string json)
+    {
+        var data = JsonConvert.DeserializeObject<ClientReady>(json);
+        _startPanel.SetMode(false);
+    }
+
     private void SetStartMode(string json)
     {
         var players = JsonConvert.DeserializeObject<PlayersInRoom>(json).PlayersID;
-        _hud.SetStartMode(players.Length == _roomData.maxPlayers);
+        _startPanel.SetStartMode(players.Length == _roomData.maxPlayers);
         foreach (var id in players)
         {
             if(id != _player.Data.ID)
@@ -59,7 +77,7 @@ public class Room : MonoBehaviour
     {
         _player = player;
         _hud.Initilizate(player, _roomData);
-        _hud.SetStartMode(false);
+        _startPanel.SetStartMode(false);
         gameObject.SetActive(true);
         _soket.GetRoomPlayer(new Server.UserData()
         {
@@ -98,7 +116,7 @@ public class Room : MonoBehaviour
         });
         _hud.AddEnemy(player);
         _enemys.Add(player);
-        _hud.SetStartMode(_enemys.Count + 1 == _roomData.maxPlayers);
+        _startPanel.SetStartMode(_enemys.Count + 1 == _roomData.maxPlayers);
         if (_enemys.Count + 1 > _roomData.maxPlayers)
             Debug.LogError("player is out range room size");
     }
@@ -110,7 +128,7 @@ public class Room : MonoBehaviour
         _hud.RemoveEnemy(player);
         _enemys.Remove(player);
         Destroy(player);
-        _hud.SetStartMode(false);
+        _startPanel.SetStartMode(false);
     }
 
     private Player GetEnemys(uint id)

@@ -28,6 +28,12 @@ public class RoomSocket : MonoBehaviour
         _actions.Add(key, action);
     }
 
+    public void StartRoom(ServerJoinRoom join, System.Action<string> action)
+    {
+        var messange = MessageData.JsonMessange("srv_ready", 
+            JsonConvert.SerializeObject(join));
+        _socket.SendRequest("ready", messange, action);
+    }
     public void GetRoomPlayer(UserData data, System.Action<string> action)
     {
         var messange = MessageData.JsonMessange("get_RoomPlayers", 

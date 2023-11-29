@@ -62,17 +62,11 @@ public class RoomList : MonoBehaviour
         UpdateContentCanvas();
     }
 
-    private void DeleteRooom(uint id)
-    {
-        var panel = GetPanel(id);
-        DeleteRooom(panel);
-        UpdateContentCanvas();
-    }
-
     private void UpdateContentCanvas()
     {
         var rect = _content.sizeDelta;
-        rect.y = _holder.cellSize.y * (_activeRooms.Count + 1);
+        var steap = _holder.cellSize.y + _holder.spacing.y;
+        rect.y = steap * (_activeRooms.Count + 1);
         _content.sizeDelta = rect;
     }
 
