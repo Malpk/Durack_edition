@@ -14,14 +14,4 @@ public class RoomHUD : MonoBehaviour
         _playerBet.SetText(room.bet.ToString());
         _roomBet.SetText((room.bet * room.maxPlayers).ToString());
     }
-
-    public void AddEnemy(Player player)
-    {
-        _row.AddPlayer(player);
-    }
-
-    public void RemoveEnemy(Player player)
-    {
-        _row.RemovePlayer(player);
-    }
 }

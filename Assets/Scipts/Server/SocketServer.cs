@@ -37,12 +37,12 @@ public class SocketServer : MonoBehaviour
                 _requests.Add(action, answerKey);
         }
         _socket.Send(messange);
-        Debug.Log(messange);
+        //Debug.Log(messange);
     }
     public void SendRequest(string messange)
     {
         _socket.Send(messange);
-        Debug.Log(messange);
+       // Debug.Log(messange);
     }
 
     protected void GetAnswer(string json)

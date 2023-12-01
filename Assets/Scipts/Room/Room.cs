@@ -10,6 +10,7 @@ public class Room : MonoBehaviour
     [SerializeField] private Player _prefab;
     [Header("Reference")]
     [SerializeField] private Lobby _lobby;
+    [SerializeField] private Table _table;
     [SerializeField] private RoomHUD _hud;
     [SerializeField] private RoomSkin _skin;
     [SerializeField] private RoomSocket _soket;
@@ -76,7 +77,7 @@ public class Room : MonoBehaviour
     public void Enter(Player player)
     {
         _player = player;
-        _hud.Initilizate(player, _roomData);
+        _table.AddPlayer(player);
         _startPanel.SetStartMode(false);
         gameObject.SetActive(true);
         _soket.GetRoomPlayer(new Server.UserData()
@@ -88,6 +89,7 @@ public class Room : MonoBehaviour
 
     public void Exit()
     {
+        _table.RemovePlayer();
         gameObject.SetActive(false);
         _lobby.gameObject.SetActive(true);
         _soket.ExitRoom(new ServerExitRoom()
@@ -114,20 +116,19 @@ public class Room : MonoBehaviour
         {
             ID = id
         });
-        _hud.AddEnemy(player);
+        _table.AddEnemy(player);
         _enemys.Add(player);
+        Debug.LogWarning(_roomData.maxPlayers);
         _startPanel.SetStartMode(_enemys.Count + 1 == _roomData.maxPlayers);
-        if (_enemys.Count + 1 > _roomData.maxPlayers)
-            Debug.LogError("player is out range room size");
     }
 
     public void RemoveEnemy(string json)
     {
-        var player = GetEnemys(JsonConvert.
+        var enemy = GetEnemys(JsonConvert.
             DeserializeObject<PlayerExit>(json).uid);
-        _hud.RemoveEnemy(player);
-        _enemys.Remove(player);
-        Destroy(player);
+        _table.RemoveEnemy(enemy);
+        _enemys.Remove(enemy);
+        Destroy(enemy);
         _startPanel.SetStartMode(false);
     }
 

@@ -3,10 +3,18 @@ using TMPro;
 
 public class PlayerPanel : MonoBehaviour
 {
+    [SerializeField] private CardHolder _cards;
     [SerializeField] private UserPreview _preview;
+    [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI _id;
 
+    public uint ID => Content.Data.ID;
     public Player Content { get; private set; }
+
+    public void AddCard(GameCard card)
+    {
+        _cards.Add(card);
+    }
 
     public void BindPlayer(Player player)
     {

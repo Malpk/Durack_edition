@@ -4,6 +4,17 @@ public class RoomRow : MonoBehaviour
 {
     [SerializeField] private PlayerPanel[] _playerPanel;
 
+    public void Clear()
+    {
+        foreach (var panel in _playerPanel)
+        {
+            if(panel.Content)
+            {
+                panel.gameObject.SetActive(false);
+                panel.BindPlayer(null);
+            }
+        }
+    }
 
     public void AddPlayer(Player player)
     {
@@ -14,16 +25,17 @@ public class RoomRow : MonoBehaviour
 
     public void RemovePlayer(Player player)
     {
-        var panel = GetPanel(player.Data.ID);
+        var panel = GetPlayer(player.Data.ID);
         panel.BindPlayer(null);
         panel.gameObject.SetActive(false);
     }
 
-    private PlayerPanel GetPanel(uint id)
+
+    public PlayerPanel GetPlayer(uint id)
     {
         foreach (var panel in _playerPanel)
         {
-            if (panel.Content.Data.ID == id)
+            if (panel.ID == id)
                 return panel;
         }
         return null;

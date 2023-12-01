@@ -1,4 +1,4 @@
-public class ClientReady
+public class ClientReadyData
 {
     public uint first;
     public Card trump;
