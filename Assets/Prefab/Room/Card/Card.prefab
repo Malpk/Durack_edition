@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6628675622073825175}
   - component: {fileID: 6628675622073825174}
+  - component: {fileID: 2421996941323017060}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -33,10 +34,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -2.7993774, y: 22.127}
+  m_SizeDelta: {x: -1825.5989, y: -935.7459}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6628675622073825174
 MonoBehaviour:
@@ -50,8 +51,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89fecc4838684f3449ca0f5f83cb1489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _smoothMove: 0.5
+  _smoothMove: 0.2
   _icon: {fileID: 6628675623221126912}
+  _rect: {fileID: 6628675622073825175}
+  _canvas: {fileID: 0}
+--- !u!225 &2421996941323017060
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6628675622073825176}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6628675623221126914
 GameObject:
   m_ObjectHideFlags: 0
@@ -85,10 +100,10 @@ RectTransform:
   m_Father: {fileID: 6628675622073825175}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 94, y: 143}
+  m_SizeDelta: {x: 0, y: -1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6628675623221126975
 CanvasRenderer:

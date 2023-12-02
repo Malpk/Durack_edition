@@ -1,42 +1,84 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class GameCard : MonoBehaviour
+public class GameCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField] private float _smoothMove;
     [Header("Reference")]
     [SerializeField] private Image _icon;
+    [SerializeField] private RectTransform _rect;
+    [SerializeField] private Canvas _canvas;
+
+    private bool _isDrag;
 
     private Coroutine _corotine;
+    private RectTransform _rectPoint;
 
     public event System.Action<GameCard> OnDelete;
     public event System.Action<GameCard> OnChangeHolder;
+
+    #region Drag
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        _isDrag = true;
+        if (_corotine != null)
+            StopCoroutine(_corotine);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        _rect.anchoredPosition += eventData.delta / _canvas.scaleFactor;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        _isDrag = false;
+        if (_rectPoint != null)
+        {
+            _corotine = StartCoroutine(Move(_rectPoint));
+        }
+    }
 
     public void BindCard(Sprite sprite)
     {
         _icon.sprite = sprite;
     }
 
-    public void MoveTo(Transform point)
+    #endregion
+
+    public void Initializate(Canvas canvas)
     {
-        if (_corotine != null)
-        {
-            StopCoroutine(_corotine);    
-        }
-        OnChangeHolder?.Invoke(this);
-        _corotine = StartCoroutine(Move(point));
+        _canvas = canvas;
     }
 
-    private IEnumerator Move(Transform point)
+    public void MoveTo(RectTransform point)
+    {
+        if (_corotine != null)
+            StopCoroutine(_corotine);
+        OnChangeHolder?.Invoke(this);
+        _rectPoint = point;
+        if (!_isDrag)
+            _corotine = StartCoroutine(Move(point));
+    }
+
+    private IEnumerator Move(RectTransform point)
     {
         var velocity = Vector3.zero;
-        Debug.Log(point);
+        var velocitySize = Vector2.zero;
         while (true)
         {
-            transform.position = Vector3.SmoothDamp(transform.position, 
+            _rect.position = Vector3.SmoothDamp(_rect.position, 
                 point.position, ref velocity, _smoothMove);
+            _rect.sizeDelta = Vector2.SmoothDamp(_rect.sizeDelta, point.sizeDelta, 
+                ref velocitySize, _smoothMove);
             yield return null;
         }
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        Debug.Log("asdasd");
     }
 }

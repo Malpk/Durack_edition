@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class RoomList : MonoBehaviour
 {
-    [SerializeField] private string _requestKey;
-    [SerializeField] private string _answerKey;
-    [Header("Reference")]
     [SerializeField] private RoomPanel _prefab;
     [SerializeField] private RectTransform _content;
     [SerializeField] private GridLayoutGroup _holder;
@@ -18,34 +15,16 @@ public class RoomList : MonoBehaviour
 
     public void UpdateRoom(RoomData [] datas)
     {
-        var list = GetNewRoom(datas);
-        foreach (var data in list)
+        var active = new List<RoomPanel>();
+        foreach (var data in datas)
         {
-            AddRoom(data);
+            active.Add(AddRoom(data));
         }
-    }
-
-    private List<RoomData> GetNewRoom(RoomData[] ids)
-    {
-        var list = new List<RoomData>();
-        list.AddRange(ids);
-        var delete = new List<RoomPanel>();
-        foreach (var panel in _activeRooms)
+        while (_activeRooms.Count > 0)
         {
-            if (list.Contains(panel.Data))
-            {
-                list.Remove(panel.Data);
-            }
-            else
-            {
-                delete.Add(panel);
-            }
+            DeleteRooom(_activeRooms[0]);
         }
-        foreach (var panel in delete)
-        {
-            DeleteRooom(panel);
-        }
-        return list;
+        _activeRooms = active;
     }
 
     private void Enter(uint id)
@@ -53,13 +32,12 @@ public class RoomList : MonoBehaviour
         OnEnterRoom?.Invoke(id);
     }
 
-    private void AddRoom(RoomData id)
+    private RoomPanel AddRoom(RoomData id)
     {
         var panel = Create();
         panel.Bind(id);
-        panel.OnEnter += Enter;
-        _activeRooms.Add(panel);
         UpdateContentCanvas();
+        return panel;
     }
 
     private void UpdateContentCanvas()
@@ -72,12 +50,10 @@ public class RoomList : MonoBehaviour
 
     private void DeleteRooom(RoomPanel panel)
     {
-        if (panel)
-        {
-            panel.OnEnter -= Enter;
-            _activeRooms.Remove(panel);
-            _pool.Add(panel);
-        }
+        panel.gameObject.SetActive(false);
+        panel.OnEnter -= Enter;
+        _activeRooms.Remove(panel);
+        _pool.Add(panel);
     }
 
     private RoomPanel GetPanel(uint id)
@@ -92,16 +68,26 @@ public class RoomList : MonoBehaviour
 
     private RoomPanel Create()
     {
-        if (_pool.Count > 0)
+        if (_activeRooms.Count > 0)
+        {
+            var panel = _activeRooms[0];
+            _activeRooms.RemoveAt(0);
+            return panel;
+        }
+        else if (_pool.Count > 0)
         {
             var panel = _pool[0];
+            panel.gameObject.SetActive(true);
+            panel.OnEnter += Enter;
             _pool.RemoveAt(0);
             return panel;
         }
         else
         {
-            return Instantiate(_prefab.gameObject, _holder.transform).
+            var panel = Instantiate(_prefab.gameObject, _holder.transform).
                 GetComponent<RoomPanel>();
+            panel.OnEnter += Enter;
+            return panel;
         }
     }
 

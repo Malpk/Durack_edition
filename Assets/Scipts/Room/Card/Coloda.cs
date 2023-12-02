@@ -11,6 +11,7 @@ public class Coloda : MonoBehaviour
     [Header("Reference")]
     [SerializeField] private Table _table;
     [SerializeField] private Image _trump;
+    [SerializeField] private Canvas _tableCanvas;
     [SerializeField] private TableSocket _socket;
 
     private List<GameCard> _poolCard = new List<GameCard>();
@@ -68,7 +69,9 @@ public class Coloda : MonoBehaviour
             _poolCard.RemoveAt(0);
             return card;
         }
-        return Instantiate(_card.gameObject, _table.transform).GetComponent<GameCard>();
+        var newCard = Instantiate(_card.gameObject, _table.transform).GetComponent<GameCard>();
+        newCard.Initializate(_tableCanvas);
+        return newCard;
     }
 
     private Sprite GetSprite(Card card)

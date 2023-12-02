@@ -14,7 +14,7 @@ public class CardHolder : MonoBehaviour
 
     public void Add(GameCard card)
     {
-        var point = GetPoint();
+        var point = GetPoint().GetComponent<RectTransform>();
         card.MoveTo(point);
         card.OnChangeHolder += Remove;
         _cards.Add(card, point);
