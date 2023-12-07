@@ -32,7 +32,7 @@ public class RoomSocket : MonoBehaviour
     {
         var messange = MessageData.JsonMessange("srv_ready", 
             JsonConvert.SerializeObject(join));
-        _socket.SendRequest("ready", messange, action);
+        _socket.SendRequest(messange);
     }
     public void GetRoomPlayer(UserData data, System.Action<string> action)
     {

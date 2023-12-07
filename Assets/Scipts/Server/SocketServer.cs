@@ -40,6 +40,7 @@ public class SocketServer : MonoBehaviour
     }
     public void SendRequest(string messange)
     {
+        _socket.Connect();
         _socket.Send(messange);
     }
 

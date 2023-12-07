@@ -29,6 +29,11 @@ public class Table : MonoBehaviour
         _tableTriger.OnDropCard -= ThrowRequest;
     }
 
+    public void SetRoomId(uint roomId)
+    {
+        _roomId = roomId;
+    }
+
     #region parts
 
     public void AddPlayer(Player player)
@@ -53,7 +58,6 @@ public class Table : MonoBehaviour
 
     #endregion
 
-
     private void ThrowRequest(GameCard card)
     {
         _card = card;
@@ -67,6 +71,7 @@ public class Table : MonoBehaviour
 
     private void ThrowCard(string json)
     {
+        Debug.Log("plcase");
         var data = JsonConvert.DeserializeObject<ClientCardData>(json);
         var card = GetCard(data.card);
         _table.PlaceCard(card);
@@ -74,7 +79,7 @@ public class Table : MonoBehaviour
 
     private GameCard GetCard(Card card)
     {
-        if (_card.Data.suit == card.suit && _card.Data.nominal == card.nominal)
+        if (_card)
             return _card;
         else
             return _coloda.CreateCard(card);

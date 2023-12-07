@@ -10,6 +10,7 @@ public class TableSocket : MonoBehaviour
     private List<System.Action> _queryCards = new List<System.Action>();
     private Dictionary<System.Action<string>, string> _actions = new Dictionary<System.Action<string>, string>();
 
+
     private void OnEnable()
     {
         _socket.OnGetMessange += GetServer;
@@ -31,6 +32,7 @@ public class TableSocket : MonoBehaviour
     {
         var messange = MessageData.JsonMessange("srv_Throw",
             JsonConvert.SerializeObject(request));
+        Debug.Log(messange);
         _socket.SendRequest(messange);
     }
     public void SendGrabCard(Server.UserData data, System.Action<string> action)
@@ -62,6 +64,7 @@ public class TableSocket : MonoBehaviour
 
     private void GetServer(MessageData messange)
     {
+        Debug.Log(messange.eventType);
         foreach (var request in _actions)
         {
             if (request.Value == messange.eventType)

@@ -29,6 +29,7 @@ public class Room : MonoBehaviour
     {
         _soket.AddAction("cl_joinRoom", AddEnemy);
         _soket.AddAction("cl_leaveRoom", RemoveEnemy);
+        _soket.AddAction("ready", OnStartRoom);
         _exitButton.onClick.AddListener(Exit);
         _startPanel.OnStart += StartGame;
     }
@@ -81,6 +82,7 @@ public class Room : MonoBehaviour
         _table.AddPlayer(player);
         _roomData.RoomId = data.RoomID;
         _roomIdText.SetText("ID: " + data.RoomID.ToString());
+        _table.SetRoomId(data.RoomID);
         _startPanel.SetStartMode(false);
         gameObject.SetActive(true);
         _soket.GetRoomPlayer(new Server.UserData()
@@ -101,13 +103,13 @@ public class Room : MonoBehaviour
             token = _player.Data.Token
         });
         _player = null;
+        _startPanel.SetMode(true);
     }
     #endregion
     #region Enemys
 
     public void AddEnemy(string json)
     {
-        Debug.Log("asd");
         var id = JsonConvert.DeserializeObject<PlayerJoin>(json).playerID;
         AddEnemy(id);
     }
@@ -133,6 +135,7 @@ public class Room : MonoBehaviour
         _enemys.Remove(enemy);
         Destroy(enemy);
         _startPanel.SetStartMode(false);
+        _startPanel.SetMode(true);
     }
 
     private Player GetEnemys(uint id)
