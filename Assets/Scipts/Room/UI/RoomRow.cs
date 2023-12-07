@@ -16,6 +16,12 @@ public class RoomRow : MonoBehaviour
         }
     }
 
+    public void SetRole(RoleData role)
+    {
+        var player = GetPlayer(role.UserID);
+        player.SetRole(role.Role);
+    }
+
     public void AddPlayer(Player player)
     {
         var panel = GetFreePanel();

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class Coloda : MonoBehaviour
 {
@@ -16,39 +17,41 @@ public class Coloda : MonoBehaviour
 
     private List<GameCard> _poolCard = new List<GameCard>();
 
-    private void OnEnable()
+    private void Awake()
     {
-        _socket.OnReady += SetTrump;
-        _socket.OnEnemyGetCard += CreateBack;
-        _socket.OnPlayerGetCard += CreateCard;
+        _socket.AddAction("clienReady", SetTrump);
+        _socket.AddAction("GetCard", CreateCard);
+        _socket.AddAction("cl_gotCard", CreateBack);
     }
 
-    private void OnDisable()
+    public void SetTrump(string json)
     {
-        _socket.OnReady -= SetTrump;
-        _socket.OnEnemyGetCard -= CreateBack;
-        _socket.OnPlayerGetCard -= CreateCard;
-    }
-
-    public void SetTrump(ClientReady ready)
-    {
+        var ready = JsonConvert.DeserializeObject<ClientReady>(json);
         _trump.sprite = GetSprite(ready.trump);
     }
 
-    private void CreateBack(UserClient user)
+    public GameCard CreateCard(Card data)
     {
+        var card = GetCard();
+        card.transform.position = transform.position;
+        card.BindCard(GetSprite(data), data);
+        card.OnDelete += ReturnCard;
+        return card;
+    }
+
+    private void CreateBack(string json)
+    {
+        var data = JsonConvert.DeserializeObject<UserClient>(json);
         var card = GetCard();
         card.transform.position = transform.position;
         card.BindCard(_back.GetSprite(_stylePath));
-        _table.TakeCard(card, user.UserID);
+        _table.TakeCard(card, data.UserID);
     }
 
-    private void CreateCard(Card data)
+    private void CreateCard(string json)
     {
-        var card = GetCard();
-        card.transform.position = transform.position;
-        card.BindCard(GetSprite(data));
-        card.OnDelete += ReturnCard;
+        var data = JsonConvert.DeserializeObject<Card>(json);
+        var card = CreateCard(data);
         _table.TakeCard(card);
     }
 

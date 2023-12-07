@@ -8,10 +8,7 @@ public class TableSocket : MonoBehaviour
     [SerializeField] private SocketServer _socket;
 
     private List<System.Action> _queryCards = new List<System.Action>();
-
-    public event System.Action<Card> OnPlayerGetCard;
-    public event System.Action<UserClient> OnEnemyGetCard;
-    public event System.Action<ClientReady> OnReady;
+    private Dictionary<System.Action<string>, string> _actions = new Dictionary<System.Action<string>, string>();
 
     private void OnEnable()
     {
@@ -25,37 +22,55 @@ public class TableSocket : MonoBehaviour
         _socket.OnGetMessange -= GetServer;
     }
 
+    public void AddAction(string answer, System.Action<string> action)
+    {
+        _actions.Add(action, answer);
+    }
+
+    public void SendThrowCard(RequestThrow request)
+    {
+        var messange = MessageData.JsonMessange("srv_Throw",
+            JsonConvert.SerializeObject(request));
+        _socket.SendRequest(messange);
+    }
+    public void SendGrabCard(Server.UserData data, System.Action<string> action)
+    {
+        var messange = MessageData.JsonMessange("srv_grab",
+            JsonConvert.SerializeObject(data));
+        _socket.SendRequest("grab", messange, action);
+    }
+
+    public void SendFoldCard(Server.UserData data, System.Action<string> action)
+    {
+        var messange = MessageData.JsonMessange("srv_fold",
+            JsonConvert.SerializeObject(data));
+        _socket.SendRequest("cl_playerFold", messange, action);
+    }
+    public void SendPassCard(Server.UserData data, System.Action<string> action)
+    {
+        var messange = MessageData.JsonMessange("srv_pass",
+            JsonConvert.SerializeObject(data));
+        _socket.SendRequest("cl_pass", messange, action);
+    }
+
+    public void SendBeatCard(RequestBeat request, System.Action<string> action)
+    {
+        var messange = MessageData.JsonMessange("srv_Throw",
+            JsonConvert.SerializeObject(request));
+        _socket.SendRequest("cl_BeatCard", messange, action);
+    }
+
     private void GetServer(MessageData messange)
     {
-        if (messange.eventType == "clienReady")
+        foreach (var request in _actions)
         {
-            OnReady?.Invoke(JsonConvert.
-           DeserializeObject<ClientReady>(messange.data));
-        }
-        else
-        {
-            var action = GiveCard(messange);
-            if (action != null)
+            if (request.Value == messange.eventType)
             {
-                _queryCards.Add(action);
+                request.Key.Invoke(messange.data);
             }
         }
     }
 
-    private System.Action GiveCard(MessageData messange)
-    {
-        if (messange.eventType == "GetCard")
-        {
-            return () => OnPlayerGetCard?.Invoke(JsonConvert.
-                    DeserializeObject<Card>(messange.data));
-        }
-        else if(messange.eventType == "cl_gotCard")
-        {
-            return () => OnEnemyGetCard?.Invoke(JsonConvert.
-                    DeserializeObject<UserClient>(messange.data));
-        }
-        return null;
-    }
 
     private IEnumerator UpdateQuery()
     {

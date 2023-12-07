@@ -8,8 +8,9 @@ public class GameCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
     [SerializeField] private float _smoothMove;
     [Header("Reference")]
     [SerializeField] private Image _icon;
-    [SerializeField] private RectTransform _rect;
     [SerializeField] private Canvas _canvas;
+    [SerializeField] private RectTransform _rect;
+    [SerializeField] private RectTransform _beatPoint;
 
     private bool _isDrag;
 
@@ -18,6 +19,9 @@ public class GameCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
 
     public event System.Action<GameCard> OnDelete;
     public event System.Action<GameCard> OnChangeHolder;
+
+    public Player Owner { get; private set; }
+    public Card Data { get; private set; }
 
     #region Drag
     public void OnBeginDrag(PointerEventData eventData)
@@ -41,12 +45,12 @@ public class GameCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
         }
     }
 
-    public void BindCard(Sprite sprite)
+    #endregion
+    public void BindCard(Sprite sprite, Card card = null)
     {
         _icon.sprite = sprite;
+        Data = card;
     }
-
-    #endregion
 
     public void Initializate(Canvas canvas)
     {
@@ -79,6 +83,13 @@ public class GameCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log("asdasd");
+        if (gameObject == eventData.pointerDrag)
+        {
+            return;
+        }
+        else if (eventData.pointerDrag.TryGetComponent(out GameCard card))
+        {
+            card.MoveTo(_beatPoint);
+        }
     }
 }

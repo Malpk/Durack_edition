@@ -1,5 +1,41 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1831627779
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1831627780}
+  m_Layer: 5
+  m_Name: BeatPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1831627780
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831627779}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6628675622073825175}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 7.5999756, y: -33.399994}
+  m_SizeDelta: {x: 100.40112, y: 148.51408}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6628675622073825176
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,7 +46,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6628675622073825175}
   - component: {fileID: 6628675622073825174}
-  - component: {fileID: 2421996941323017060}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -31,11 +66,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6628675623221126913}
+  - {fileID: 1831627780}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -2.7993774, y: 22.127}
   m_SizeDelta: {x: -1825.5989, y: -935.7459}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -53,20 +89,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _smoothMove: 0.2
   _icon: {fileID: 6628675623221126912}
-  _rect: {fileID: 6628675622073825175}
   _canvas: {fileID: 0}
---- !u!225 &2421996941323017060
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6628675622073825176}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
+  _rect: {fileID: 6628675622073825175}
+  _beatPoint: {fileID: 1831627780}
 --- !u!1 &6628675623221126914
 GameObject:
   m_ObjectHideFlags: 0

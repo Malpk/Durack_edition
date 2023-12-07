@@ -26,11 +26,11 @@ public class SocketServer : MonoBehaviour
             Debug.LogError("WebSocket: " + _socket.Url.ToString() + ", error: "
                 + e.Exception + " : " + e.Message + " : " + sender);
         };
-        _socket.Connect();
     }
 
     public void SendRequest(string answerKey, string messange, System.Action<string> action = null)
     {
+        _socket.Connect();
         if (action != null)
         {
             if (!_requests.ContainsKey(action))
@@ -49,7 +49,7 @@ public class SocketServer : MonoBehaviour
             Debug.LogError("is't run MainThreadDispatcher");
         MainThreadDispatcher.RunOnMainThread(() =>
         {
-            Debug.Log("get: " + json);
+            Debug.LogWarning("get: " + json);
             var messange = JsonUtility.FromJson<MessageData>(json);
             foreach (var reciver in GetRecivers(messange.eventType))
             {

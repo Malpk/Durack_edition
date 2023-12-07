@@ -1,23 +1,43 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 using System.Collections.Generic;
-public class TableUI : MonoBehaviour, IDropHandler
+
+public class TableUI : MonoBehaviour
 {
-    [SerializeField] private RectTransform _pointPrefab;
+    [SerializeField] private CardPoint _pointPrefab;
 
-    private List<Transform> _pool = new List<Transform>();
+    private List<CardPoint> _point = new List<CardPoint>();
+    private List<CardPoint> _pool = new List<CardPoint>();
 
-    public void OnDrop(PointerEventData eventData)
+    public event System.Action<GameCard> OnPlace;
+
+    public void PlaceCard(GameCard card)
     {
-        if (eventData.pointerDrag.TryGetComponent(out GameCard card))
-        {
-            card.MoveTo(GetPoint());
-        }
+        var point = GetPoint();
+        point.BindCard(card);
+        _point.Add(point);
     }
 
-    private RectTransform GetPoint()
+    public GameCard GrabCard()
     {
-        var point = Instantiate(_pointPrefab.gameObject, transform);
-        return point.GetComponent<RectTransform>();
+        if (_point.Count > 0)
+        {
+            var card = _point[0].Content;
+            _point[0].Clear();
+            _point[0].gameObject.SetActive(false);
+            _point.RemoveAt(0);
+            return card;
+        }
+        return null;
+    }
+
+    private CardPoint GetPoint()
+    {
+        if(_pool.Count > 0)
+        {
+            var point = _pool[0];
+            point.gameObject.SetActive(true);
+            return point;
+        }
+        return Instantiate(_pointPrefab.gameObject, transform).GetComponent<CardPoint>();
     }
 }

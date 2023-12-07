@@ -93,16 +93,16 @@ public class Lobby : MonoBehaviour
 
     #region Action
 
-    public void OnEnterRoom(uint roomId)
+    public void OnEnterRoom(RoomData data)
     {
-        _socket.EnterRoom(roomId, _player.Data, JoinRoom);
+        _room.InitializateRoom(data);
+        _socket.EnterRoom(data.RoomId, _player.Data, JoinRoom);
     }
 
     private void JoinRoom(string json)
     {
         var data = JsonConvert.DeserializeObject<JoinRoom>(json);
-        _room.InitializateRoom(data);
-        _room.Enter(_player);
+        _room.Enter(_player, data);
         gameObject.SetActive(false);
     }
 
@@ -110,6 +110,13 @@ public class Lobby : MonoBehaviour
     {
         data.roomOwner = _player.Data.ID;
         data.token = _player.Data.Token;
+        _room.InitializateRoom(new RoomData()
+        {
+            Bet = data.bet,
+            CountPlayer = 1,
+            RoomId = 0,
+            RoomSize = data.maxPlayers
+        });
         _socket.CreateRoom(data, JoinRoom);
     }
     #endregion

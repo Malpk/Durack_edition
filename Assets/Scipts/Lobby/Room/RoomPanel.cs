@@ -15,7 +15,7 @@ public class RoomPanel : MonoBehaviour
     public RoomData Data { get; private set; }
 
 
-    public event System.Action<uint> OnEnter;
+    public event System.Action<RoomData> OnEnter;
 
     private void Awake()
     {
@@ -37,7 +37,7 @@ public class RoomPanel : MonoBehaviour
 
     private void Enter()
     {
-        OnEnter?.Invoke(ID);
+        OnEnter?.Invoke(Data);
     }
 
     private Sprite GetIcon(int type)

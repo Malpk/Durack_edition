@@ -3,6 +3,8 @@ using TMPro;
 
 public class PlayerPanel : MonoBehaviour
 {
+    [SerializeField] private ERole _role;
+    [Header("Reference")]
     [SerializeField] private CardHolder _cards;
     [SerializeField] private UserPreview _preview;
     [Header("UI Reference")]
@@ -29,5 +31,10 @@ public class PlayerPanel : MonoBehaviour
         {
             _id.gameObject.SetActive(false);
         }
+    }
+
+    public void SetRole(ERole role)
+    {
+        _role = role;
     }
 }

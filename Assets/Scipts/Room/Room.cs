@@ -21,7 +21,7 @@ public class Room : MonoBehaviour
 
     private Player _player;
     private List<Player> _enemys = new List<Player>();
-    private JoinRoom _roomData;
+    private RoomData _roomData;
 
     public RoomSkin Skin => _skin;
 
@@ -39,10 +39,10 @@ public class Room : MonoBehaviour
         _startPanel.OnStart -= StartGame;
     }
 
-    public void InitializateRoom(JoinRoom room)
+    public void InitializateRoom(RoomData room)
     {
         _roomData = room;
-        _roomIdText.SetText("ID:" + room.RoomID.ToString());
+        _hud.Initilizate(room);
     }
     #region Mode
 
@@ -50,7 +50,7 @@ public class Room : MonoBehaviour
     {
         var readyData = new ServerJoinRoom()
         {
-            RoomID = _roomData.RoomID
+            RoomID = _roomData.RoomId
         };
         _soket.StartRoom(readyData, OnStartRoom);
     }
@@ -64,7 +64,7 @@ public class Room : MonoBehaviour
     private void SetStartMode(string json)
     {
         var players = JsonConvert.DeserializeObject<PlayersInRoom>(json).PlayersID;
-        _startPanel.SetStartMode(players.Length == _roomData.maxPlayers);
+        _startPanel.SetStartMode(players.Length == _roomData.RoomSize);
         foreach (var id in players)
         {
             if(id != _player.Data.ID)
@@ -74,16 +74,17 @@ public class Room : MonoBehaviour
 
     #endregion
     #region Player
-    public void Enter(Player player)
+    public void Enter(Player player, JoinRoom data)
     {
         _player = player;
         _table.AddPlayer(player);
+        _roomData.RoomId = data.RoomID;
+        _roomIdText.SetText("ID: " + data.RoomID.ToString());
         _startPanel.SetStartMode(false);
         gameObject.SetActive(true);
         _soket.GetRoomPlayer(new Server.UserData()
         {
             UserID = _player.Data.ID,
-            RoomID = _roomData.RoomID
         }, SetStartMode);
     }
 
@@ -94,7 +95,7 @@ public class Room : MonoBehaviour
         _lobby.gameObject.SetActive(true);
         _soket.ExitRoom(new ServerExitRoom()
         {
-            rid = _roomData.RoomID,
+            rid = _roomData.RoomId,
             token = _player.Data.Token
         });
         _player = null;
@@ -104,6 +105,7 @@ public class Room : MonoBehaviour
 
     public void AddEnemy(string json)
     {
+        Debug.Log("asd");
         var id = JsonConvert.DeserializeObject<PlayerJoin>(json).playerID;
         AddEnemy(id);
     }
@@ -118,8 +120,7 @@ public class Room : MonoBehaviour
         });
         _table.AddEnemy(player);
         _enemys.Add(player);
-        Debug.LogWarning(_roomData.maxPlayers);
-        _startPanel.SetStartMode(_enemys.Count + 1 == _roomData.maxPlayers);
+        _startPanel.SetStartMode(_enemys.Count + 1 == _roomData.RoomSize);
     }
 
     public void RemoveEnemy(string json)

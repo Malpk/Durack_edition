@@ -8,7 +8,6 @@ public class LobbyLoader : MonoBehaviour
 
     public void Load(string data)
     {
-        Debug.Log(data);
         PlayerPrefs.SetString(_key, data);
         SceneManager.LoadScene(_lobbyId);
     }

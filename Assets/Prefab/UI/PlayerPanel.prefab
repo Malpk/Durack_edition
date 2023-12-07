@@ -800,6 +800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2292e4c8d47ef9a43a51e53b0f02c68c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _role: 0
   _cards: {fileID: 4721658261241831916}
   _preview: {fileID: 3503799704098763523}
   _id: {fileID: 3503799702738886587}
