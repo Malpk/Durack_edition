@@ -37,6 +37,7 @@ public class Room : MonoBehaviour
     {
         _exitButton.onClick.RemoveAllListeners();
         _startPanel.OnStart -= StartGame;
+        Exit();
     }
 
     public void InitializateRoom(RoomData room)
@@ -85,6 +86,7 @@ public class Room : MonoBehaviour
         _soket.GetRoomPlayer(new Server.UserData()
         {
             UserID = _player.Data.ID,
+            RoomID = data.RoomID
         }, SetStartMode);
     }
 
